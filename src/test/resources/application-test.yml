@@ -1,0 +1,14 @@
+# Profile for the Testcontainers-based suite (AbstractIntegrationTest). Datasource and Redis
+# are injected at runtime from the containers; only the app-level secrets need values here.
+# Reuses the local-dev keypair - never used against prod or Neon/Upstash.
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+gatekeeper:
+  bootstrap-token: test-bootstrap-token
+  jwt:
+    private-key: classpath:local/jwt-private.pem
+    public-key: classpath:local/jwt-public.pem
