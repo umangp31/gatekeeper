@@ -18,13 +18,19 @@ class TenantUserPersistenceIT extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @AfterEach
+    void clearContext() {
+        TenantContext.clear();
+    }
+
     @Test
     void persistsAndReadsTenantAndUser() {
         Tenant tenant = new Tenant(UUID.randomUUID(), "acme", "Acme Inc");
         tenantRepository.saveAndFlush(tenant);
 
+        // TenantEntityListener (T-08) stamps tenant_id from the context and rejects persists without one.
+        TenantContext.set(tenant.getId());
         User user = new User(UUID.randomUUID(), "admin@acme.test", "bcrypt-hash");
-        user.setTenantId(tenant.getId());
         userRepository.saveAndFlush(user);
 
         assertThat(tenantRepository.findBySlug("acme")).isPresent();
