@@ -51,8 +51,9 @@ public abstract class AbstractIntegrationTest {
     void resetDatabase() {
         JdbcTemplate jdbc = new JdbcTemplate(dataSource);
         var tables = jdbc.queryForList(
+                // permissions is the global catalogue seeded by V6, not tenant state - keep it.
                 "SELECT tablename FROM pg_tables WHERE schemaname = 'public' "
-                        + "AND tablename <> 'flyway_schema_history'",
+                        + "AND tablename NOT IN ('flyway_schema_history', 'permissions')",
                 String.class);
         if (!tables.isEmpty()) {
             jdbc.execute("TRUNCATE TABLE " + String.join(", ", tables) + " RESTART IDENTITY CASCADE");

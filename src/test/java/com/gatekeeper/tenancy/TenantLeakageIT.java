@@ -3,30 +3,26 @@ package com.gatekeeper.tenancy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.gatekeeper.security.User;
+import com.gatekeeper.support.AbstractIntegrationTest;
 import com.gatekeeper.security.UserService;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
- * Sandbox stand-in for §10 T6 (tenant leakage - API), see T-05 note. For every id-addressed
+ * §10 T6 (tenant leakage - API), on Testcontainers. For every id-addressed
  * endpoint, tenant A's token requesting tenant B's resource must get 404 — never 403, which
  * would confirm the resource exists in another tenant (doc/scope.md §9).
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("local")
-class TenantLeakageIT {
+class TenantLeakageIT extends AbstractIntegrationTest {
 
     private static final String RAW_PASSWORD = "correct-horse-battery-staple";
 
@@ -68,18 +64,6 @@ class TenantLeakageIT {
         tokenA = login(tenantA.getSlug(), userA.getEmail());
     }
 
-    @AfterEach
-    void cleanup() {
-        jdbc.update("DELETE FROM audit_log");
-        jdbc.update("DELETE FROM user_roles");
-        jdbc.update("DELETE FROM role_hierarchy");
-        jdbc.update("DELETE FROM role_permissions");
-        jdbc.update("DELETE FROM roles");
-        jdbc.update("DELETE FROM refresh_tokens");
-        jdbc.update("DELETE FROM users");
-        jdbc.update("DELETE FROM tenants");
-        TenantContext.clear();
-    }
 
     @Test
     void userByIdAcrossTenantsReturns404NotForbidden() {
