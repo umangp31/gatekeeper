@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:55432/gatekeeper
+    username: gatekeeper
+    password: gatekeeper
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      ssl:
+        enabled: false
+
+logging:
+  level:
+    com.gatekeeper: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# Local-only demo credentials; never used against prod or Neon/Upstash.
+gatekeeper:
+  bootstrap-token: local-dev-bootstrap-token
+  jwt:
+    private-key: classpath:local/jwt-private.pem
+    public-key: classpath:local/jwt-public.pem

@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gatekeeper-postgres
+    environment:
+      POSTGRES_DB: gatekeeper
+      POSTGRES_USER: gatekeeper
+      POSTGRES_PASSWORD: gatekeeper
+    ports:
+      - "55432:5432"
+    volumes:
+      - gatekeeper-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gatekeeper -d gatekeeper"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: gatekeeper-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - gatekeeper-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  gatekeeper-postgres-data:
+  gatekeeper-redis-data:

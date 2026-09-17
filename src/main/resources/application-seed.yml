@@ -1,0 +1,8 @@
+# Opt-in profile that adds the demo dataset (doc/scope.md §11) on top of `local`. Deliberately
+# NOT bundled into `local` itself: the local profile is what integration tests activate, and
+# persistent seed rows (Flyway migrations only ever run once against the docker-compose volume)
+# would collide with tests that reset their own tables broadly. Run with:
+#   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local,seed
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed

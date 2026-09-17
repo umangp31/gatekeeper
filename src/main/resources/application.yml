@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: gatekeeper
+  data:
+    redis:
+      # Bounded on purpose: ResilientCache (§8.6) is designed to fail fast and fall through to
+      # Postgres, not hang for Lettuce's 60s default command timeout on a broken connection.
+      timeout: 2s
+      connect-timeout: 2s
+  threads:
+    virtual:
+      enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+gatekeeper:
+  environment: ${APP_ENVIRONMENT:local}

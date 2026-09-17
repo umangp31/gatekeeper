@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      initialization-fail-timeout: -1
+  data:
+    redis:
+      url: ${REDIS_URL}
+      ssl:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.gatekeeper: INFO
+
+gatekeeper:
+  bootstrap-token: ${BOOTSTRAP_TOKEN}
+  jwt:
+    private-key: ${JWT_PRIVATE_KEY}
+    public-key: ${JWT_PUBLIC_KEY}
+  environment: ${APP_ENVIRONMENT:prod}
