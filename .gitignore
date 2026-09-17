@@ -36,3 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# web console
+web/node_modules/
+web/dist/
+web/.env
+web/.env.local

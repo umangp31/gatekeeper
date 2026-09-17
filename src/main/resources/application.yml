@@ -42,3 +42,7 @@ springdoc:
 
 gatekeeper:
   environment: ${APP_ENVIRONMENT:local}
+  cors:
+    # Origins allowed to call /api/** from a browser (the web/ console). Vite dev proxies, so
+    # this only matters when the console is hosted separately.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}

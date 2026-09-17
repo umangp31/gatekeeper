@@ -5,16 +5,17 @@
 INSERT INTO tenants (id, slug, name) VALUES
     ('00000000-0000-0000-0000-000000000001', 'acme', 'Acme Inc');
 
--- admin -> editor -> viewer inheritance chain: editor inherits admin's grants, viewer
--- inherits editor's (and so admin's, transitively).
+-- viewer <- editor <- admin inheritance chain: editor inherits viewer's grants, admin
+-- inherits editor's (and so viewer's, transitively).
 INSERT INTO roles (id, tenant_id, name, description) VALUES
     ('00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000001', 'admin', 'Full access'),
     ('00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000001', 'editor', 'Can manage flags and view roles'),
     ('00000000-0000-0000-0000-000000000103', '00000000-0000-0000-0000-000000000001', 'viewer', 'Read-only');
 
+-- Child inherits the parent's permissions (doc/scope.md §6.1): admin ⊇ editor ⊇ viewer.
 INSERT INTO role_hierarchy (parent_role_id, child_role_id) VALUES
-    ('00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000102'),
-    ('00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000103');
+    ('00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000101'), -- admin  inherits editor
+    ('00000000-0000-0000-0000-000000000103', '00000000-0000-0000-0000-000000000102'); -- editor inherits viewer
 
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT '00000000-0000-0000-0000-000000000101', id FROM permissions; -- admin gets everything

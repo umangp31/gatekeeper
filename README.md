@@ -146,3 +146,18 @@ Full table in [`doc/scope.md` §9](doc/scope.md). Key groups:
 - `/roles`, `/roles/{id}`, `/roles/{id}/permissions/{code}`, `/roles/{id}/parents/{parentId}`, `/permissions`
 - `/flags`, `/flags/{key}`, `/flags/{key}/whitelist/{userId}`, `/flags/{key}/overrides/{env}`,
   `/flags/{key}/evaluate`, `/flags/evaluate` (bulk)
+
+## Admin console (web/)
+
+A separate React + Vite console for exercising the API end to end: login/bootstrap,
+users (roles, ABAC attributes, effective permissions), roles (grants, inheritance),
+feature flags (rollout, whitelist, env overrides, evaluate) and a raw request playground.
+
+```bash
+cd web && npm install
+npm run dev            # http://localhost:5173 — proxies /api to the backend on :8080
+npm run build          # static bundle in web/dist; set VITE_API_BASE_URL to the backend origin
+```
+
+Cross-origin access is controlled by `CORS_ALLOWED_ORIGINS` (comma-separated; default
+`http://localhost:5173` locally, empty in prod).
