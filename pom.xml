@@ -21,6 +21,7 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <testcontainers.version>1.21.1</testcontainers.version>
+        <local.it.exclude>**/Local*IT.java</local.it.exclude>
     </properties>
 
     <dependencies>
@@ -148,6 +149,29 @@
 
     <build>
         <plugins>
+            <!--
+              Integration tests (*IT) run in the verify phase via failsafe. Local*IT classes talk
+              to the docker-compose stack on localhost and are excluded by default; run them with
+              ./mvnw verify -Dlocal.it=true (compose stack up). The remaining ITs use Testcontainers
+              and therefore run anywhere a Docker daemon exists, including CI.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>${local.it.exclude}</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -160,4 +184,20 @@
         </plugins>
     </build>
 
+
+    <profiles>
+        <!-- ./mvnw verify -Dlocal.it=true : also run the docker-compose-backed Local*IT tests -->
+        <profile>
+            <id>local-it</id>
+            <activation>
+                <property>
+                    <name>local.it</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <local.it.exclude>nothing-excluded</local.it.exclude>
+            </properties>
+        </profile>
+    </profiles>
 </project>
