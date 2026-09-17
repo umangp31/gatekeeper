@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
 function Item({ to, end, children, onClick }: { to: string; end?: boolean; children: React.ReactNode; onClick?: () => void }) {
   return (
     <NavLink to={to} end={end} onClick={onClick} className={({ isActive }) => cn(
-      'block border-l-4 px-3 py-2 text-sm font-semibold uppercase tracking-wide transition-colors',
-      isActive ? 'border-primary bg-primary/30 text-foreground' : 'border-transparent text-foreground/70 hover:border-foreground hover:text-foreground',
+      'block border-l-4 px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition-colors',
+      isActive ? 'border-foreground bg-primary/45 text-foreground' : 'border-transparent text-foreground/65 hover:border-foreground/40 hover:text-foreground',
     )}>{children}</NavLink>
   )
 }
@@ -26,7 +26,7 @@ export function Layout() {
   const nav = (
     <>
       <Item to="/" end onClick={close}>My app (end user)</Item>
-      <div className="mt-4 mb-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Admin console</div>
+      <div className="mt-5 mb-1 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Admin console</div>
       <Item to="/overview" onClick={close}>Overview</Item>
       {can('user:read') && <Item to="/users" onClick={close}>Users</Item>}
       {can('role:read') && <Item to="/roles" onClick={close}>Roles</Item>}
@@ -35,7 +35,7 @@ export function Layout() {
       <div className="mt-auto border-t-2 border-foreground pt-3 text-xs">
         <div className="font-bold">{session?.tenant?.name ?? 'unknown tenant'}</div>
         <div className="font-mono break-all">{session?.tenant?.slug ?? '?'} · {session?.userId.slice(0, 8)}…</div>
-        <div className="mt-1 text-muted-foreground">Admin links hide when you lack <code>*:read</code>.</div>
+        <div className="mt-1 text-muted-foreground">Admin pages appear only with the matching <code>*:read</code> permission.</div>
         <div className="mt-3 grid gap-2">
           <InfoButton />
           <Button variant="destructive" size="sm" className="w-full" onClick={logout}>Log out</Button>
@@ -64,8 +64,8 @@ export function Layout() {
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2 text-xl font-black uppercase tracking-tight">
-      <span className="inline-block size-5 bg-primary" /><span className="inline-block size-5 bg-destructive" /> Gatekeeper
+    <div className="flex items-center gap-2 font-heading text-xl leading-none tracking-tight">
+      <span className="inline-block size-4 bg-primary" /><span className="inline-block size-4 bg-destructive" /> Gatekeeper
     </div>
   )
 }

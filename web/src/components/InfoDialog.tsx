@@ -10,12 +10,12 @@ const SEEN_KEY = 'gk.guideSeen'
 export function InfoDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-[min(96vw,1200px)] max-w-none overflow-hidden border-2 border-foreground p-0 shadow-[8px_8px_0_0_var(--foreground)]">
+      <DialogContent className="flex max-h-[92vh] w-[min(96vw,1500px)] max-w-[96vw] flex-col overflow-hidden border-2 border-foreground p-0 shadow-[8px_8px_0_0_var(--foreground)] sm:max-w-[96vw]">
         <DialogHeader className="border-b-2 border-foreground bg-primary px-6 py-4">
-          <DialogTitle className="text-xl font-black uppercase tracking-tight">Gatekeeper — what it is & how to use it</DialogTitle>
+          <DialogTitle className="font-heading text-xl leading-tight">What Gatekeeper is & how to use it</DialogTitle>
           <DialogDescription className="text-foreground/80">Multi-tenant permissions and feature-flag service. This console is a test harness for it.</DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="what" className="px-6 pb-6">
+        <Tabs defaultValue="what" className="flex min-h-0 flex-1 flex-col px-6 pb-6">
           <TabsList className="mt-4 flex-wrap">
             <TabsTrigger value="what">What is it</TabsTrigger>
             <TabsTrigger value="concepts">Concepts</TabsTrigger>
@@ -23,7 +23,7 @@ export function InfoDialog({ open, onOpenChange }: { open: boolean; onOpenChange
             <TabsTrigger value="pages">Pages</TabsTrigger>
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
           </TabsList>
-          <div className="mt-4 max-h-[65vh] overflow-y-auto pr-2 text-sm leading-relaxed">
+          <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-2 text-sm leading-relaxed">
             <TabsContent value="what" className="space-y-3">
               <p><b>Gatekeeper</b> is an authorization backend that a product plugs into to answer two questions for every request:</p>
               <ol className="list-decimal space-y-1 pl-5">
@@ -80,7 +80,7 @@ export function InfoDialog({ open, onOpenChange }: { open: boolean; onOpenChange
             <TabsContent value="accounts" className="space-y-3">
               <p>Seeded tenant <code>acme</code> (start the backend with the <code>seed</code> profile):</p>
               <table className="w-full border-2 border-foreground text-left">
-                <thead className="bg-primary"><tr><th className="p-2">Email</th><th className="p-2">Password</th><th className="p-2">Role</th><th className="p-2">Sees</th></tr></thead>
+                <thead className="bg-primary text-[11px] uppercase tracking-[0.1em]"><tr><th className="p-2">Email</th><th className="p-2">Password</th><th className="p-2">Role</th><th className="p-2">Sees</th></tr></thead>
                 <tbody>
                   <tr className="border-t-2 border-foreground"><td className="p-2"><code>admin@acme.test</code></td><td className="p-2"><code>admin123</code></td><td className="p-2">admin</td><td className="p-2">everything; whitelisted for <code>beta-dashboard</code></td></tr>
                   <tr className="border-t-2 border-foreground"><td className="p-2"><code>viewer@acme.test</code>*</td><td className="p-2"><code>viewer123</code></td><td className="p-2">viewer</td><td className="p-2">read-only admin pages; writes → 403</td></tr>
@@ -114,7 +114,7 @@ export function InfoButton() {
   }, [])
   return (
     <>
-      <Button variant="outline" size="sm" className="w-full" onClick={() => setOpen(true)}>ⓘ What is this?</Button>
+      <Button variant="outline" size="sm" className="w-full" onClick={() => setOpen(true)}>Open the guide</Button>
       <InfoDialog open={open} onOpenChange={setOpen} />
     </>
   )

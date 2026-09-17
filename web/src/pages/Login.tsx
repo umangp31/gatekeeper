@@ -5,10 +5,9 @@ import { tenants } from '../api/gatekeeper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="grid gap-1.5"><Label>{label}</Label>{children}</div>
+function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
+  return <div className="grid gap-1.5"><Label htmlFor={id}>{label}</Label>{children}</div>
 }
 
 export function LoginPage() {
@@ -28,39 +27,53 @@ export function LoginPage() {
     try {
       if (mode === 'bootstrap') {
         await tenants.bootstrap({ slug, name, adminEmail: email, adminPassword: password }, bootstrapToken)
-        toast.ok(`Tenant "${slug}" created`, 'Logging in as its admin…')
+        toast.ok(`Tenant "${slug}" created`, 'Signing in as its admin…')
       }
       await login(slug, email, password)
     } catch (err) { toast.error(err) } finally { setBusy(false) }
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[repeating-linear-gradient(45deg,transparent,transparent_18px,var(--primary)_18px,var(--primary)_20px)]">
-      <Card className="w-96 border-4 border-foreground shadow-[8px_8px_0_0_var(--foreground)]">
-        <CardHeader>
-          <CardTitle className="text-2xl font-black uppercase"><span className="bg-primary px-2">Gatekeeper</span></CardTitle>
-          <CardDescription>{mode === 'login' ? 'Sign in to a tenant' : 'Bootstrap a new tenant + admin'}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="grid gap-4" onSubmit={submit}>
-            <Field label="Tenant slug"><Input value={slug} onChange={e => setSlug(e.target.value)} required /></Field>
-            {mode === 'bootstrap' && <Field label="Tenant name"><Input value={name} onChange={e => setName(e.target.value)} required /></Field>}
-            <Field label={mode === 'login' ? 'Email' : 'Admin email'}><Input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></Field>
-            <Field label={mode === 'login' ? 'Password' : 'Admin password (min 8)'}><Input type="password" value={password} onChange={e => setPassword(e.target.value)} required /></Field>
-            {mode === 'bootstrap' && <Field label="X-Bootstrap-Token"><Input value={bootstrapToken} onChange={e => setBootstrapToken(e.target.value)} required /></Field>}
-            <Button disabled={busy} className="w-full">{mode === 'login' ? 'Sign in' : 'Create tenant & sign in'}</Button>
-          </form>
-          {mode === 'login' && (
-            <p className="mt-4 text-xs text-muted-foreground">
-              Tip: create extra users in <b>Users</b> (a viewer with only the <code>viewer</code> role, one with no role),
-              then log in as them to see the end-user view change.
+    <div className="grid min-h-screen place-items-center px-4 py-8">
+      <div className="grid w-full max-w-4xl gap-0 border-2 border-foreground md:grid-cols-[1fr_400px]">
+        {/* thesis panel */}
+        <div className="flex flex-col justify-between gap-8 border-b-2 border-foreground bg-primary p-8 md:border-r-2 md:border-b-0">
+          <div className="flex items-center gap-2 font-heading text-lg leading-none">
+            <span className="inline-block size-4 bg-foreground" /><span className="inline-block size-4 bg-destructive" /> Gatekeeper
+          </div>
+          <div>
+            <h1 className="font-heading text-4xl leading-[0.95] tracking-tight">Who may do what, and who sees which feature.</h1>
+            <p className="mt-4 max-w-prose text-sm leading-relaxed">
+              One tenant-scoped service answers both: roles that inherit, attribute rules on the token, and feature flags with
+              rollouts, whitelists and environment pins — all changeable at runtime.
             </p>
-          )}
-          <Button variant="link" className="mt-2 px-0" onClick={() => setMode(mode === 'login' ? 'bootstrap' : 'login')}>
-            {mode === 'login' ? 'Bootstrap a new tenant instead' : 'Back to sign in'}
-          </Button>
-        </CardContent>
-      </Card>
+          </div>
+          <dl className="grid grid-cols-3 gap-4 border-t-2 border-foreground pt-4 text-xs">
+            <div><dt className="font-bold uppercase tracking-[0.12em]">Access</dt><dd>RBAC + ABAC</dd></div>
+            <div><dt className="font-bold uppercase tracking-[0.12em]">Flags</dt><dd>4-rule evaluation</dd></div>
+            <div><dt className="font-bold uppercase tracking-[0.12em]">Isolation</dt><dd>404, never 403</dd></div>
+          </dl>
+        </div>
+        {/* form */}
+        <div className="bg-background p-8">
+          <h2 className="font-heading text-xl leading-none">{mode === 'login' ? 'Sign in' : 'Create a tenant'}</h2>
+          <p className="mt-1 mb-6 text-sm text-muted-foreground">{mode === 'login' ? 'Into a tenant, with email and password.' : 'Provisions the tenant and its first admin.'}</p>
+          <form className="grid gap-4" onSubmit={submit}>
+            <Field label="Tenant slug" id="slug"><Input id="slug" value={slug} onChange={e => setSlug(e.target.value)} required /></Field>
+            {mode === 'bootstrap' && <Field label="Tenant name" id="name"><Input id="name" value={name} onChange={e => setName(e.target.value)} required /></Field>}
+            <Field label={mode === 'login' ? 'Email' : 'Admin email'} id="email"><Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required /></Field>
+            <Field label={mode === 'login' ? 'Password' : 'Admin password (8+ characters)'} id="password"><Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required /></Field>
+            {mode === 'bootstrap' && <Field label="Bootstrap token" id="token"><Input id="token" value={bootstrapToken} onChange={e => setBootstrapToken(e.target.value)} required /></Field>}
+            <Button type="submit" disabled={busy} size="lg" className="w-full">{busy ? 'Working…' : mode === 'login' ? 'Sign in' : 'Create tenant and sign in'}</Button>
+          </form>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <Button variant="link" size="sm" className="px-0" onClick={() => setMode(mode === 'login' ? 'bootstrap' : 'login')}>
+              {mode === 'login' ? 'Create a new tenant instead' : 'Back to sign in'}
+            </Button>
+            {mode === 'login' && <span className="text-muted-foreground">Seeded: <code>acme</code> / <code>admin@acme.test</code></span>}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

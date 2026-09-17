@@ -22,7 +22,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div key={t.id} className={cn(
             'min-w-64 max-w-md border-2 border-foreground bg-background px-4 py-3 text-sm shadow-[4px_4px_0_0_var(--foreground)]',
             t.kind === 'err' && 'border-destructive text-destructive shadow-[4px_4px_0_0_var(--destructive)]',
-            t.kind === 'ok' && 'bg-primary',
+            t.kind === 'ok' && 'shadow-[4px_4px_0_0_var(--primary)]',
           )}>
             <div className="font-semibold">{t.title}</div>
             {t.detail && <div className="opacity-80">{t.detail}</div>}
