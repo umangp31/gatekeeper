@@ -6,6 +6,7 @@ import com.gatekeeper.security.User;
 import com.gatekeeper.security.UserRepository;
 import com.gatekeeper.support.AbstractIntegrationTest;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
